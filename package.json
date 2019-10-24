@@ -1,0 +1,23 @@
+{
+  "name": "queue-predict",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "node index.js pd -v true"
+  },
+  "author": "Toshimonster",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow/tfjs": "^1.2.9",
+    "@tensorflow/tfjs-node": "^1.2.9",
+    "cli-progress": "^2.1.1",
+    "express": "^4.17.1",
+    "js-xlsx": "^0.8.22",
+    "regression": "^2.0.1",
+    "yargs": "^13.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0"
+  }
+}
