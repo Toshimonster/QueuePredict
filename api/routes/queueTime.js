@@ -6,4 +6,8 @@ router.get("/")
 
 router.get("/ping", controller.ping)
 
+router.get("/getRides", controller.getRides)
+
+router.get("/getWaitTime/:rideName", controller.getWaitTime)
+
 module.exports = router

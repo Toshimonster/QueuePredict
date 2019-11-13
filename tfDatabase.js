@@ -1,11 +1,11 @@
-module.exports = () => {
+module.exports = (rideName = "Big_Thunder_Mountain_Railroad.csv") => {
     const tf = require("@tensorflow/tfjs")
     require("@tensorflow/tfjs-node")
 
     const model = require("./modelTf")()
   
     // eslint-disable-next-line no-useless-escape
-    let datasetUrl = "file://FormattedData/Big_Thunder_Mountain_Railroad.csv"
+    let datasetUrl = `file://FormattedData/${rideName}.csv`
 
     const dataset = tf.data.csv(
         datasetUrl, {
@@ -24,15 +24,15 @@ module.exports = () => {
         .map(({xs, ys}) => {
             // Convert xs and ys from object form  to array form.
             return {xs:Object.values(xs), ys:Object.values(ys)};
-        }).batch(100);
+        }).batch(1);
 
     console.log(flattenedDataset)
 
     model.fitDataset(flattenedDataset, {
-        epochs: 5
+        epochs: 1
     })
         .then(() => {
-            model.save('file://MODELTEST')
+            model.save(`file://Models/${rideName}`)
               .then(() => {
                 const prediction = model.predict(tf.tensor2d([
                   [2002, 6, 6, 6, 6, 6, 6],
@@ -45,20 +45,6 @@ module.exports = () => {
               })
             
         })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /*
     const model = tf.sequential();
