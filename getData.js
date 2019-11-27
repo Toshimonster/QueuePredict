@@ -88,10 +88,8 @@ function publish (fileName, data) {
 
 
 module.exports = (argv) => {
-
-    let rideName = argv.rideName || 'Big Thunder Mountain Railroad'
-
-    console.log("Not completed")
+    require("./wrapper")(argv.argv)
+    let rideName = argv.argv._[1] || "Big_Thunder_Mountain_Railroad"
 
     let data = Array()
 
@@ -99,9 +97,12 @@ module.exports = (argv) => {
 
     //2019-01-22,19:00
 
-    data = require("./getAttractionData")(rideName)
+    console.verbose(`Finding rides attributing to ${rideName.replace("_", " ")}!`)
+
+    data = require("./getAttractionData")(argv, rideName.replace("_", " "))
 
     //Assuming data[i] wait, year, month, day, hour and minute variables.
+
 
     let weather = new Weather("./Other data/weather.csv")
     weather.parse()

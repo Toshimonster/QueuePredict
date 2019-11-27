@@ -4,9 +4,10 @@ const yargs = require("yargs")
 yargs
     .command('server', 'Runs the program in server mode, applying everything into an api', require("./api/index"))
     .command('train <ride> [batchSize] [epochs]', 'Trains data in ./FormattedData into a Model in ./Models', require("./tfDatabase"))
-    .command('pd', 'Parses the data in ./Data Set and resolves for useful infomation', require("./pd"))
+    .command('getData <ride>', 'Gets data to save into a file, to then be trained.', require("./getData"))
+    .command('getRides', 'Gives all available rides to train, and saves them into ./AllRides.txt', require("./getRideNames"))
     .command('trainingTest', 'Generates random training data to train a network for a 3-way NOR gate.', require("./trainTest"))
-    .command('getData', 'Gets data to save into a file, to then be trained.', require("./getData"))
+    .command('pd', 'Parses the data in ./Data Set and resolves for useful infomation', require("./pd"))
     .option('verbose', {
         alias: 'v',
         type: 'boolean',

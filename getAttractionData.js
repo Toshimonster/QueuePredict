@@ -2,9 +2,8 @@ const xlsx = require("js-xlsx")
 const path = require("path")
 const fs = require("fs")
 
-console.verbose = (...args) => {console.log.apply(this, args)}
-
-module.exports = (attraction = 'Big Thunder Mountain Railroad', datasets = 999) => {
+module.exports = (argv, attraction = 'Big Thunder Mountain Railroad', datasets = 999) => {
+    require("./wrapper")(argv.argv)
     //Default Big Thunder Mountain
     const ATTRACTION = attraction
 

@@ -15,7 +15,6 @@ exports.getRides = (req, res, next) => {
 
 exports.getWaitTime = (req, res, next) => {
     //Check folder exists
-    console.log(req.params.rideName)
     fs.exists(`./Models/${req.params.rideName}/model.json`, (exists) => {
         if (exists) {
             //Load model
@@ -24,8 +23,15 @@ exports.getWaitTime = (req, res, next) => {
                 .then((model) => {
                     //Predict upon (the querys) year,month,day,hour,minute,temp,precipitation
                     //Use 1st Jan 2010 
+                    //As the year maps like 2017 -> 117, subtract 1900.
+                    //Temp is optional, and is measured in degrees. Inconsistant accuracy.
+                    //Precipitation is optional, and is measured in mm. Inconsistant accuracy.
+                    //Hour is from 0-23 inclusive
+                    //Min is from 0-59 inclusive
+                    //Month is from 1-12 inclusive
+                    //Day is from 1-31 inclusive
                     let prediction = model.predict(tf.tensor2d([
-                        [Number(req.query.year) || 2010, Number(req.query.month) || 1, Number(req.query.day) || 1, Number(req.query.hour) || 1, Number(req.query.minute) || 1, Number(req.query.temp) || 1, Number(req.query.precipitation) || 1]
+                        [(Number(req.query.year) || 2010)-1900, (Number(req.query.month) || 0), Number(req.query.day) || 1, Number(req.query.hour) || 1, Number(req.query.minute) || 1, Number(req.query.temp) || 1, Number(req.query.precipitation) || 1]
                     ]))
                     prediction.array()
                         .then((a) => {
