@@ -58,6 +58,7 @@ module.exports = (attraction = 'Big Thunder Mountain Railroad', datasets = 999) 
     let dataToReturn = []
     data.forEach((dataSet) => {
         dataSet.forEach((set) => {
+
             //console.log(set)
             let date = new Date(set[" "])
             let toAppend = {

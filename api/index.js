@@ -3,7 +3,7 @@ const app = express()
 
 const queueTimeRoutes = require("./routes/queueTime")
 
-
+module.exports = (argv) => {
 // Access Control
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
@@ -43,3 +43,6 @@ app.use((error, req, res, next) => {
 app.listen(80, () => {
     console.log("Server running on port 80")
 })
+
+app
+}

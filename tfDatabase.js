@@ -1,52 +1,75 @@
-module.exports = (rideName = "Big_Thunder_Mountain_Railroad.csv") => {
-    const tf = require("@tensorflow/tfjs")
-    require("@tensorflow/tfjs-node")
+module.exports = (argv) => {
+  require("./wrapper")(argv.argv)
+  const tf = require("@tensorflow/tfjs")
+  require("@tensorflow/tfjs-node")
 
-    const model = require("./modelTf")()
-  
-    // eslint-disable-next-line no-useless-escape
-    let datasetUrl = `file://FormattedData/${rideName}.csv`
+  console.verbose("Running tfDatabase")
 
-    const dataset = tf.data.csv(
-        datasetUrl, {
-            columnConfigs: {
-                Wait: {
-                    //Define Wait time as the label
-                    isLabel: true
-                }
-            }
+  const rideName = argv.argv._[1] || "Big_Thunder_Mountain_Railroad"
+  const model = require("./modelTf")()
+  console.verbose(`Ride name is : ${rideName}`)
+
+  // eslint-disable-next-line no-useless-escape
+  let datasetUrl = `file://FormattedData/${rideName}.csv`
+  console.verbose(`File location pointed at ${datasetUrl}`)
+
+
+  const dataset = tf.data.csv(
+    datasetUrl, {
+      columnConfigs: {
+        Wait: {
+          //Define Wait time as the label
+          isLabel: true
         }
-    )
+      }
+    }
+  )
+  console.verbose("Initialized dataset")
 
-    console.log(dataset)
+  const flattenedDataset = dataset
+    .map(({
+      xs,
+      ys
+    }) => {
+      // Convert xs and ys from object form  to array form.
+      return {
+        xs: Object.values(xs),
+        ys: Object.values(ys)
+      };
+    }).batch(argv.argv._[2] || 50); //Batch size from yargs
+  console.verbose("Flattened dataset")
 
-    const flattenedDataset = dataset
-        .map(({xs, ys}) => {
-            // Convert xs and ys from object form  to array form.
-            return {xs:Object.values(xs), ys:Object.values(ys)};
-        }).batch(1);
+  console.verbose("Fitting model to dataset")
 
-    console.log(flattenedDataset)
-
-    model.fitDataset(flattenedDataset, {
-        epochs: 1
+  model.fitDataset(flattenedDataset, {
+      epochs: argv.argv._[3] || 1 //Epochs from yargs
     })
+    .then(() => {
+      console.verbose("Successfully fitted dataset")
+      model.save(`file://Models/${rideName}`)
         .then(() => {
-            model.save(`file://Models/${rideName}`)
-              .then(() => {
-                const prediction = model.predict(tf.tensor2d([
-                  [2002, 6, 6, 6, 6, 6, 6],
-                  [2001, 6, 6, 6, 6, 6, 6],
-                  [2001, 7, 5, 3, 2, 3, 0],
-                  [2003, 1, 1, 1, 1, 1, 1],
-                  [2004, 2, 2, 2, 2, 2, 2]
-                ]));
-                prediction.print();
-              })
-            
+          console.verbose(`Saved model at file://Models/${rideName}`)
+          const prediction = model.predict(tf.tensor2d([
+            [2002, 6, 6, 6, 6, 6, 6],
+            [2001, 6, 6, 6, 6, 6, 6],
+            [2001, 7, 5, 3, 2, 3, 0],
+            [2003, 1, 1, 1, 1, 1, 1],
+            [2004, 2, 2, 2, 2, 2, 2]
+          ]));
+          prediction.print();
+        })
+        .catch((err) => {
+          console.log("Error while saving model!")
+          console.error(err)
         })
 
-    /*
+    })
+    .catch((err) => {
+      console.log(`File at ${datasetUrl} does not exist! Please use a correct ride name.`)
+      console.verbose(err)
+    })
+
+  /*
     const model = tf.sequential();
     model.add(tf.layers.dense({
       units: 100,
@@ -104,6 +127,4 @@ module.exports = (rideName = "Big_Thunder_Mountain_Railroad.csv") => {
   
     })
     */
-  }
-
-module.exports()
+}
